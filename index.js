@@ -3,7 +3,7 @@
 const H = process.stdout.rows-3;
 const W = process.stdout.columns-2;
 const threshold = .1;
-const interval = 50;
+const interval = 100;
 const boarder = "\n+" + new Array(W + 1).join("-") + "+\n";
 const B = [];
 const times = {};
@@ -107,7 +107,7 @@ function wrap(fn) {
 }
 
 function wait() {
-  setTimeout(step, interval - times.step);
+  setTimeout(step, interval - times.step.c);
 }
 
 make();
