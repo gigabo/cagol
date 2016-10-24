@@ -48,8 +48,17 @@ const live = wrap(function live() {
 });
 
 const time = wrap(function time() {
-  output.push(JSON.stringify(times));
+  output.push(Object.keys(times).map(name => {
+    const {c, m} = times[name];
+    return name + ": " + lpad(c) + " (" + lpad(m) + ")";
+  }).join(" | "));
 });
+
+const lpad = function(v) {
+  v = "" + v;
+  while (v.length < 3) v = " " + v;
+  return v;
+}
 
 const emit = wrap(function emit() {
   process.stdout.write(output.join(""));
@@ -66,11 +75,14 @@ const step = wrap(function step() {
 
 function wrap(fn) {
   const {name} = fn;
-  times [name] = 0;
+  const v = times[name] = {n: 0, t: 0, c: 0, m: 0};
   return function() {
     const t0 = new Date;
     fn();
-    times[name] = new Date - t0;
+    v.n ++;
+    v.c  = new Date - t0;
+    v.t += v.c;
+    v.m  = (v.t / v.n) | 0;
   };
 }
 
