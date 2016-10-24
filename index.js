@@ -3,6 +3,7 @@
 const H = process.stdout.rows-3;
 const W = process.stdout.columns-2;
 const threshold = .1;
+const interval = 50;
 const boarder = "\n+" + new Array(W + 1).join("-") + "+\n";
 const B = [];
 const neighbors = [
@@ -60,6 +61,7 @@ const step = wrap(function step() {
   live();
   time();
   emit();
+  wait();
 });
 
 function wrap(fn) {
@@ -72,5 +74,9 @@ function wrap(fn) {
   };
 }
 
+function wait() {
+  setTimeout(step, interval - times.step);
+}
+
 make();
-setInterval(step, 0);
+step();
