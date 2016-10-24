@@ -3,13 +3,14 @@
 const H = process.stdout.rows-3;
 const W = process.stdout.columns-2;
 const threshold = .1;
-const boarder = "+" + new Array(W + 1).join("-") + "+";
+const boarder = "\n+" + new Array(W + 1).join("-") + "+\n";
 const B = [];
 const neighbors = [
   [-1, -1], [-1, 0], [-1, 1],
   [ 0, -1],          [ 0, 1],
   [ 1, -1], [ 1, 0], [ 1, 1],
 ];
+const times = {};
 
 function make() {
   for (let i = 0; i < H; i++) {
@@ -21,16 +22,16 @@ function make() {
 }
 
 const liveCell = "\x1b[7m \x1b[0m";
-function draw() {
-  console.log("\n\n" + boarder);
-  for (let i = 0; i < H; i++) console.log("|"
+const draw = wrap(function draw() {
+  process.stdout.write(boarder);
+  for (let i = 0; i < H; i++) process.stdout.write("|"
     + B[i].map(v => v ? liveCell : " ").join("") +
   "|");
-  console.log(boarder);
-}
+  process.stdout.write(boarder);
+});
 
 
-function live() {
+const live = wrap(function live() {
   const N = [];
   for (let i = 0; i < H; i++) {
     N[i] = [];
@@ -42,11 +43,26 @@ function live() {
   for (let i = 0; i < H; i++) {
     B[i] = N[i];
   }
-}
+});
 
-function step() {
+const time = wrap(function time() {
+  process.stdout.write(JSON.stringify(times));
+});
+
+const step = wrap(function step() {
   draw();
   live();
+  time();
+});
+
+function wrap(fn) {
+  const {name} = fn;
+  times [name] = 0;
+  return function() {
+    const t0 = new Date;
+    fn();
+    times[name] = new Date - t0;
+  };
 }
 
 make();
