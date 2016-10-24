@@ -38,7 +38,11 @@ const live = wrap(function live() {
   for (let i = 0; i < H; i++) {
     N[i] = [];
     for (let j = 0; j < W; j++) {
-      const n = neighbors.reduce((v, [I,J]) => v += (B[i+I] || [])[j+J] || 0, 0);
+      let n = 0;
+      for (var k = 0; k < neighbors.length; k++) {
+        const [I, J] = neighbors[k];
+        if (B[i+I] && B[i+I][j+J]) n +=1;
+      }
       N[i][j] = (B[i][j] ? n === 2 || n === 3 : (n === 3)) ? 1 : 0;
     }
   }
