@@ -73,4 +73,4 @@ function wrap(fn) {
 }
 
 make();
-setInterval(step, 50);
+setInterval(step, 0);
