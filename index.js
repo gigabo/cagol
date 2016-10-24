@@ -11,6 +11,7 @@ const neighbors = [
   [ 1, -1], [ 1, 0], [ 1, 1],
 ];
 const times = {};
+const output = [];
 
 function make() {
   for (let i = 0; i < H; i++) {
@@ -23,11 +24,11 @@ function make() {
 
 const liveCell = "\x1b[7m \x1b[0m";
 const draw = wrap(function draw() {
-  process.stdout.write(boarder);
-  for (let i = 0; i < H; i++) process.stdout.write("|"
+  output.push(boarder);
+  for (let i = 0; i < H; i++) output.push("|"
     + B[i].map(v => v ? liveCell : " ").join("") +
   "|");
-  process.stdout.write(boarder);
+  output.push(boarder);
 });
 
 
@@ -46,13 +47,19 @@ const live = wrap(function live() {
 });
 
 const time = wrap(function time() {
-  process.stdout.write(JSON.stringify(times));
+  output.push(JSON.stringify(times));
+});
+
+const emit = wrap(function emit() {
+  process.stdout.write(output.join(""));
+  output.splice(0, output.length, []);
 });
 
 const step = wrap(function step() {
   draw();
   live();
   time();
+  emit();
 });
 
 function wrap(fn) {
