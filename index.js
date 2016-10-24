@@ -6,11 +6,6 @@ const threshold = .1;
 const interval = 50;
 const boarder = "\n+" + new Array(W + 1).join("-") + "+\n";
 const B = [];
-const neighbors = [
-  [-1, -1], [-1, 0], [-1, 1],
-  [ 0, -1],          [ 0, 1],
-  [ 1, -1], [ 1, 0], [ 1, 1],
-];
 const times = {};
 const output = [];
 
@@ -39,9 +34,30 @@ const live = wrap(function live() {
     N[i] = [];
     for (let j = 0; j < W; j++) {
       let n = 0;
-      for (var k = 0; k < neighbors.length; k++) {
-        const [I, J] = neighbors[k];
-        if (B[i+I] && B[i+I][j+J]) n +=1;
+      let I = i;
+      let J = j - 1;
+
+      // Middle row.
+      if (B[I][J]) n++;
+      J = j + 1;
+      if (B[I][J]) n++;
+
+      // Row above.
+      I = i - 1;
+      J = j - 1;
+      if (B[I]) {
+        if (B[I][J++]) n++;
+        if (B[I][J++]) n++;
+        if (B[I][J  ]) n++;
+      }
+
+      // Row below.
+      I = i + 1;
+      J = j - 1;
+      if (B[I]) {
+        if (B[I][J++]) n++;
+        if (B[I][J++]) n++;
+        if (B[I][J  ]) n++;
       }
       N[i][j] = (B[i][j] ? n === 2 || n === 3 : (n === 3)) ? 1 : 0;
     }
